@@ -1,3 +1,5 @@
+[![npm](https://img.shields.io/npm/v/gcn-kafka)](https://www.npmjs.com/package/gcn-kafka)
+
 # GCN Kafka Client for Node.js
 
 This is the official Node.js client for the [General Coordinates Network (GCN)](https://gcn.nasa.gov). It is a very lightweight wrapper around [Kafka.js](https://kafka.js.org).
