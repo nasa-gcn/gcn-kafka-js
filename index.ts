@@ -1,7 +1,21 @@
 // SPDX-License-Identifier: CC0-1.0
 
-import { Kafka as BaseKafka, KafkaConfig } from 'kafkajs'
+import { Kafka as BaseKafka } from 'kafkajs'
+import type {
+  KafkaConfig as BaseKafkaConfig,
+  ConsumerConfig as BaseConsumerConfig,
+} from 'kafkajs'
 import { Issuer } from 'openid-client'
+import { randomUUID } from 'crypto'
+
+export type KafkaConfig = {
+  client_id: string
+  client_secret?: string
+  domain: 'gcn.nasa.gov' | 'test.gcn.nasa.gov' | 'dev.gcn.nasa.gov'
+} & Omit<BaseKafkaConfig, 'brokers'>
+
+export type ConsumerConfig = Omit<BaseConsumerConfig, 'groupId'> &
+  Partial<Pick<BaseConsumerConfig, 'groupId'>>
 
 export class Kafka extends BaseKafka {
   constructor({
@@ -9,12 +23,8 @@ export class Kafka extends BaseKafka {
     client_secret,
     domain = 'gcn.nasa.gov',
     ...config
-  }: {
-    client_id: string
-    client_secret?: string
-    domain: 'gcn.nasa.gov' | 'test.gcn.nasa.gov' | 'dev.gcn.nasa.gov'
-  } & KafkaConfig) {
-    config.brokers ??= [`kafka.${domain}:9092`]
+  }: KafkaConfig) {
+    const brokers = [`kafka.${domain}:9092`]
     config.ssl ??= true
 
     if (client_id && !config.sasl) {
@@ -39,6 +49,11 @@ export class Kafka extends BaseKafka {
       }
     }
 
-    super(config)
+    super({ brokers, ...config })
+  }
+
+  consumer({ groupId, ...config }: ConsumerConfig = {}) {
+    groupId ??= randomUUID()
+    return super.consumer({ groupId, ...config })
   }
 }
