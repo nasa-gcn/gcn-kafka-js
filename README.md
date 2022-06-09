@@ -16,7 +16,7 @@ Create a client:
 
 ```mjs
 import { Kafka } from 'gcn-kafka'
-const kafka = new Kafka({client_id: '...', client_secret: '...'})
+const kafka = new Kafka({ client_id: '...', client_secret: '...' })
 ```
 
 List topics:
@@ -31,17 +31,17 @@ Subscribe to topics and receive alerts:
 
 ```mjs
 const consumer = kafka.consumer()
-  await consumer.subscribe({
-    topics: [
-      'gcn.classic.text.FERMI_GBM_FIN_POS',
-      'gcn.classic.text.LVC_INITIAL',
-    ],
-  })
+await consumer.subscribe({
+  topics: [
+    'gcn.classic.text.FERMI_GBM_FIN_POS',
+    'gcn.classic.text.LVC_INITIAL',
+  ],
+})
 
-  await consumer.run({
-    eachMessage: async (payload) => {
-      const value = payload.message.value
-      console.log(value?.toString())
-    },
-  })
+await consumer.run({
+  eachMessage: async (payload) => {
+    const value = payload.message.value
+    console.log(value?.toString())
+  },
+})
 ```
