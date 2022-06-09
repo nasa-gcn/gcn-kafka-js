@@ -11,7 +11,7 @@ import { randomUUID } from 'crypto'
 export type KafkaConfig = {
   client_id: string
   client_secret?: string
-  domain: 'gcn.nasa.gov' | 'test.gcn.nasa.gov' | 'dev.gcn.nasa.gov'
+  domain?: 'gcn.nasa.gov' | 'test.gcn.nasa.gov' | 'dev.gcn.nasa.gov'
 } & Omit<BaseKafkaConfig, 'brokers'>
 
 export type ConsumerConfig = Omit<BaseConsumerConfig, 'groupId'> &
