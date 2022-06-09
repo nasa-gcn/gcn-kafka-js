@@ -48,3 +48,30 @@ await consumer.run({
   },
 })
 ```
+
+## Testing and Development Kafka Clusters
+
+GCN has three Kafka clusters: production, testing, and an internal development deployment. Use the optional `domain` parameter to select which broker to connect to.
+
+```mjs
+// Production (default)
+const kafka = new Kafka({
+  client_id: 'fill me in',
+  client_secret: 'fill me in',
+  domain: 'gcn.nasa.gov',
+})
+
+// Testing
+const kafka = new Kafka({
+  client_id: 'fill me in',
+  client_secret: 'fill me in',
+  domain: 'test.gcn.nasa.gov',
+})
+
+// Development (internal)
+const kafka = new Kafka({
+  client_id: 'fill me in',
+  client_secret: 'fill me in',
+  domain: 'dev.gcn.nasa.gov',
+})
+```
