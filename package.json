@@ -4,7 +4,7 @@
   "description": "Official Node.js Kafka client for the General Coordinates Network (GCN)",
   "repository": {
     "type": "git",
-    "url": "github:nasa/gcn-kafka-js"
+    "url": "github:tachgsfc/gcn-kafka-js"
   },
   "main": "index.js",
   "files": [
