@@ -16,7 +16,10 @@ Create a client:
 
 ```mjs
 import { Kafka } from 'gcn-kafka'
-const kafka = new Kafka({ client_id: '...', client_secret: '...' })
+const kafka = new Kafka({
+  client_id: 'fill me in',
+  client_secret: 'fill me in',
+})
 ```
 
 List topics:
