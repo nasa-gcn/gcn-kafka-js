@@ -1,6 +1,6 @@
 {
   "name": "gcn-kafka",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Official Node.js Kafka client for the General Coordinates Network (GCN)",
   "repository": {
     "type": "git",
@@ -40,8 +40,8 @@
     "typescript": "^4.7.3"
   },
   "dependencies": {
-    "@kafkajs/zstd": "^0.1.1",
     "kafkajs": "^2.0.2",
+    "kafkajs-zstd-node-16": "^0.1.1",
     "openid-client": "^5.1.6"
   },
   "prettier": {
