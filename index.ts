@@ -1,12 +1,19 @@
 // SPDX-License-Identifier: CC0-1.0
 
-import { Kafka as BaseKafka } from 'kafkajs'
+import {
+  CompressionCodecs,
+  CompressionTypes,
+  Kafka as BaseKafka,
+} from 'kafkajs'
 import type {
   KafkaConfig as BaseKafkaConfig,
   ConsumerConfig as BaseConsumerConfig,
 } from 'kafkajs'
+import ZstdCodec from '@kafkajs/zstd'
 import { Issuer } from 'openid-client'
 import { randomUUID } from 'crypto'
+
+CompressionCodecs[CompressionTypes.ZSTD] = ZstdCodec()
 
 export type KafkaConfig = {
   client_id: string
