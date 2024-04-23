@@ -9,9 +9,9 @@ import type {
   KafkaConfig as BaseKafkaConfig,
   ConsumerConfig as BaseConsumerConfig,
 } from 'kafkajs'
-import ZstdCodec from 'kafkajs-zstd-node-16'
 import { Issuer } from 'openid-client'
 import { randomUUID } from 'crypto'
+import ZstdCodec from '@kafkajs/zstd'
 
 CompressionCodecs[CompressionTypes.ZSTD] = ZstdCodec()
 
