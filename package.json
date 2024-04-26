@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "@kafkajs/zstd": "^0.1.1",
-    "kafkajs": "^2.0.2",
+    "kafkajs": "^2.2.4",
     "openid-client": "^5.1.6"
   },
   "prettier": {
