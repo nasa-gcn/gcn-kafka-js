@@ -11,7 +11,7 @@ import type {
 } from 'kafkajs'
 import { Issuer } from 'openid-client'
 import { randomUUID } from 'crypto'
-import ZstdCodec from '@kafkajs/zstd'
+import ZstdCodec from 'kafkajs-zstd-node-16'
 
 CompressionCodecs[CompressionTypes.ZSTD] = ZstdCodec()
 
