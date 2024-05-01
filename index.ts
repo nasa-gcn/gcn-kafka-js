@@ -9,11 +9,17 @@ import type {
   KafkaConfig as BaseKafkaConfig,
   ConsumerConfig as BaseConsumerConfig,
 } from 'kafkajs'
-import ZstdCodec from 'kafkajs-zstd-node-16'
 import { Issuer } from 'openid-client'
 import { randomUUID } from 'crypto'
 
-CompressionCodecs[CompressionTypes.ZSTD] = ZstdCodec()
+import { compress, decompress } from '@mongodb-js/zstd'
+
+CompressionCodecs[CompressionTypes.ZSTD] = () => {
+  return {
+    compress,
+    decompress,
+  }
+}
 
 export type KafkaConfig = {
   client_id: string
