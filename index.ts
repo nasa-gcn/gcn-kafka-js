@@ -70,3 +70,10 @@ export class Kafka extends BaseKafka {
     return super.consumer({ groupId, ...config })
   }
 }
+
+export {
+  AclResourceTypes,
+  ResourcePatternTypes,
+  AclOperationTypes,
+  AclPermissionTypes,
+} from 'kafkajs'
