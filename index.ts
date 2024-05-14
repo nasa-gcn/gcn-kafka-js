@@ -21,16 +21,16 @@ CompressionCodecs[CompressionTypes.ZSTD] = () => {
   }
 }
 
-export type KafkaConfig = {
+type KafkaConfig = {
   client_id: string
   client_secret?: string
   domain?: 'gcn.nasa.gov' | 'test.gcn.nasa.gov' | 'dev.gcn.nasa.gov'
 } & Omit<BaseKafkaConfig, 'brokers'>
 
-export type ConsumerConfig = Omit<BaseConsumerConfig, 'groupId'> &
+type ConsumerConfig = Omit<BaseConsumerConfig, 'groupId'> &
   Partial<Pick<BaseConsumerConfig, 'groupId'>>
 
-export class Kafka extends BaseKafka {
+class Kafka extends BaseKafka {
   constructor({
     client_id,
     client_secret,
@@ -71,9 +71,5 @@ export class Kafka extends BaseKafka {
   }
 }
 
-export {
-  AclResourceTypes,
-  ResourcePatternTypes,
-  AclOperationTypes,
-  AclPermissionTypes,
-} from 'kafkajs'
+export * from 'kafkajs'
+export { Kafka, ConsumerConfig, KafkaConfig }
