@@ -1,6 +1,6 @@
 {
   "name": "gcn-kafka",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Official Node.js Kafka client for the General Coordinates Network (GCN)",
   "repository": {
     "type": "git",
