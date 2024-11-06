@@ -1,19 +1,13 @@
+name: Node.js CI
 on:
   push:
     branches:
       - main
   pull_request:
-
+    branches:
+      - main
 jobs:
-  install:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '16'
-      - name: NPM Install
-        run: npm ci
-      - name: Run Prettier code style checks
-        run: npx prettier -c .
+  build:
+    uses: nasa-gcn/.github/.github/workflows/node.yml@main
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
