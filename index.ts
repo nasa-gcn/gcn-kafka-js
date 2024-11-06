@@ -4,10 +4,12 @@ import {
   CompressionCodecs,
   CompressionTypes,
   Kafka as BaseKafka,
+  Partitioners,
 } from 'kafkajs'
 import type {
   KafkaConfig as BaseKafkaConfig,
   ConsumerConfig as BaseConsumerConfig,
+  ProducerConfig,
 } from 'kafkajs'
 import { Issuer } from 'openid-client'
 import { randomUUID } from 'crypto'
@@ -68,6 +70,14 @@ class Kafka extends BaseKafka {
   consumer({ groupId, ...config }: ConsumerConfig = {}) {
     groupId ??= randomUUID()
     return super.consumer({ groupId, ...config })
+  }
+
+  producer({ createPartitioner, ...config }: ProducerConfig = {}) {
+    // Suppress default partitioner warning.
+    // FIXME: remove once KafkaJS has removed the warning.
+    // See https://kafka.js.org/docs/migration-guide-v2.0.0#producer-new-default-partitioner
+    createPartitioner ??= Partitioners.DefaultPartitioner
+    return super.producer({ createPartitioner, ...config })
   }
 }
 
