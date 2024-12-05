@@ -31,10 +31,10 @@
   ],
   "license": "CC0-1.0",
   "engines": {
-    "node": ">=14"
+    "node": ">=18"
   },
   "devDependencies": {
-    "@tsconfig/node14": "^14.1.2",
+    "@tsconfig/node18": "^18.2.4",
     "@types/node": "^22.0.0",
     "prettier": "3.3.3",
     "typescript": "^5.5.3"
