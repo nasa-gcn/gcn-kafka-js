@@ -11,7 +11,7 @@ import type {
   ConsumerConfig as BaseConsumerConfig,
   ProducerConfig,
 } from 'kafkajs'
-import { Issuer } from 'openid-client'
+import { clientCredentialsGrant, Configuration } from 'openid-client'
 import { randomUUID } from 'crypto'
 
 import { compress, decompress } from '@mongodb-js/zstd'
@@ -43,22 +43,19 @@ class Kafka extends BaseKafka {
     config.ssl ??= true
 
     if (client_id && !config.sasl) {
-      const issuer = new Issuer({
-        issuer: domain,
-        token_endpoint: `https://auth.${domain}/oauth2/token`,
-      })
-
-      const client = new issuer.Client({ client_id, client_secret })
+      const oidcConfig = new Configuration(
+        {
+          issuer: domain,
+          token_endpoint: `https://auth.${domain}/oauth2/token`,
+        },
+        client_id,
+        client_secret,
+      )
 
       config.sasl = {
         mechanism: 'oauthbearer',
         oauthBearerProvider: async () => {
-          const { access_token } = await client.grant({
-            grant_type: 'client_credentials',
-          })
-          if (!access_token) {
-            throw new Error('response must contain access_token')
-          }
+          const { access_token } = await clientCredentialsGrant(oidcConfig)
           return { value: access_token }
         },
       }
