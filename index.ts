@@ -15,6 +15,9 @@ import { Issuer } from 'openid-client'
 import { randomUUID } from 'crypto'
 
 import { compress, decompress } from '@mongodb-js/zstd'
+import { readFileSync } from 'fs'
+import { homedir } from 'os'
+import { join } from 'path'
 
 CompressionCodecs[CompressionTypes.ZSTD] = () => {
   return {
@@ -25,7 +28,7 @@ CompressionCodecs[CompressionTypes.ZSTD] = () => {
 
 type KafkaConfig = {
   client_id: string
-  client_secret?: string
+  scope: string
   domain?: 'gcn.nasa.gov' | 'test.gcn.nasa.gov' | 'dev.gcn.nasa.gov'
 } & Omit<BaseKafkaConfig, 'brokers'>
 
@@ -35,7 +38,7 @@ type ConsumerConfig = Omit<BaseConsumerConfig, 'groupId'> &
 class Kafka extends BaseKafka {
   constructor({
     client_id,
-    client_secret,
+    scope,
     domain = 'gcn.nasa.gov',
     ...config
   }: KafkaConfig) {
@@ -48,14 +51,18 @@ class Kafka extends BaseKafka {
         token_endpoint: `https://auth.${domain}/oauth2/token`,
       })
 
-      const client = new issuer.Client({ client_id, client_secret })
-
+      const client = new issuer.Client({
+        client_id,
+        token_endpoint_auth_method: 'none',
+        response_types: ['code'],
+      })
+      const refreshToken = readFileSync(
+        join(homedir(), '.gcn', scope.replace('/', '_')),
+      ).toString()
       config.sasl = {
         mechanism: 'oauthbearer',
         oauthBearerProvider: async () => {
-          const { access_token } = await client.grant({
-            grant_type: 'client_credentials',
-          })
+          const { access_token } = await client.refresh(refreshToken)
           if (!access_token) {
             throw new Error('response must contain access_token')
           }
