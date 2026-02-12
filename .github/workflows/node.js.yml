@@ -4,6 +4,8 @@ on:
       - main
   pull_request:
 
+permissions: {}
+
 jobs:
   install:
     runs-on: ubuntu-latest
