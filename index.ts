@@ -1,85 +1,54 @@
 // SPDX-License-Identifier: CC0-1.0
 
-import {
-  CompressionCodecs,
-  CompressionTypes,
-  Kafka as BaseKafka,
-  Partitioners,
-} from 'kafkajs'
-import type {
-  KafkaConfig as BaseKafkaConfig,
-  ConsumerConfig as BaseConsumerConfig,
-  ProducerConfig,
-} from 'kafkajs'
-import { Issuer } from 'openid-client'
+import { KafkaJS } from '@confluentinc/kafka-javascript'
 import { randomUUID } from 'crypto'
 
-import { compress, decompress } from '@mongodb-js/zstd'
-
-CompressionCodecs[CompressionTypes.ZSTD] = () => {
-  return {
-    compress,
-    decompress,
-  }
-}
-
-type KafkaConfig = {
-  client_id: string
+type GcnKafkaConfig = {
+  client_id?: string
   client_secret?: string
   domain?: 'gcn.nasa.gov' | 'test.gcn.nasa.gov' | 'dev.gcn.nasa.gov'
-} & Omit<BaseKafkaConfig, 'brokers'>
-
-type ConsumerConfig = Omit<BaseConsumerConfig, 'groupId'> &
-  Partial<Pick<BaseConsumerConfig, 'groupId'>>
-
-class Kafka extends BaseKafka {
-  constructor({
-    client_id,
-    client_secret,
-    domain = 'gcn.nasa.gov',
-    ...config
-  }: KafkaConfig) {
-    const brokers = [`kafka.${domain}:9092`]
-    config.ssl ??= true
-
-    if (client_id && !config.sasl) {
-      const issuer = new Issuer({
-        issuer: domain,
-        token_endpoint: `https://auth.${domain}/oauth2/token`,
-      })
-
-      const client = new issuer.Client({ client_id, client_secret })
-
-      config.sasl = {
-        mechanism: 'oauthbearer',
-        oauthBearerProvider: async () => {
-          const { access_token } = await client.grant({
-            grant_type: 'client_credentials',
-          })
-          if (!access_token) {
-            throw new Error('response must contain access_token')
-          }
-          return { value: access_token }
-        },
-      }
-    }
-
-    super({ brokers, ...config })
-  }
-
-  consumer({ groupId, ...config }: ConsumerConfig = {}) {
-    groupId ??= randomUUID()
-    return super.consumer({ groupId, ...config })
-  }
-
-  producer({ createPartitioner, ...config }: ProducerConfig = {}) {
-    // Suppress default partitioner warning.
-    // FIXME: remove once KafkaJS has removed the warning.
-    // See https://kafka.js.org/docs/migration-guide-v2.0.0#producer-new-default-partitioner
-    createPartitioner ??= Partitioners.DefaultPartitioner
-    return super.producer({ createPartitioner, ...config })
-  }
 }
 
-export * from 'kafkajs'
-export { Kafka, ConsumerConfig, KafkaConfig }
+export type CommonConfig = GcnKafkaConfig &
+  Omit<KafkaJS.CommonConstructorConfig, 'kafkaJS'>
+export type ProducerConfig = GcnKafkaConfig &
+  Omit<KafkaJS.ProducerConstructorConfig, 'kafkaJS'>
+export type ConsumerConfig = GcnKafkaConfig &
+  Omit<KafkaJS.ConsumerConstructorConfig, 'kafkaJS'>
+
+function resolveConfig({
+  client_id,
+  client_secret,
+  domain,
+  ...config
+}: CommonConfig) {
+  config['security.protocol'] ??= 'sasl_ssl'
+  config['bootstrap.servers'] ??= `kafka.${domain}`
+
+  if (client_id) {
+    config['sasl.mechanisms'] ??= 'OAUTHBEARER'
+    config['sasl.oauthbearer.method'] ??= 'oidc'
+    config['sasl.oauthbearer.client.id'] ??= client_id
+    if (client_secret)
+      config['sasl.oauthbearer.client.secret'] ??= client_secret
+    config['sasl.oauthbearer.token.endpoint.url'] ??=
+      `https://auth.${domain}/oauth2/token`
+  }
+  return config
+}
+
+export class Kafka extends KafkaJS.Kafka {
+  constructor({ domain = 'gcn.nasa.gov', ...config }: CommonConfig) {
+    super(resolveConfig({ domain, ...config }))
+  }
+
+  consumer({ ...config }: ConsumerConfig = {}) {
+    config['group.id'] ??= randomUUID()
+    return super.consumer(config)
+  }
+
+  producer({ ...config }: ProducerConfig = {}) {
+    config['compression.type'] ??= 'zstd'
+    return super.producer(config)
+  }
+}

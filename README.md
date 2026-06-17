@@ -2,7 +2,7 @@
 
 # GCN Kafka Client for Node.js
 
-This is the official Node.js client for the [General Coordinates Network (GCN)](https://gcn.nasa.gov). It is a very lightweight wrapper around [Kafka.js](https://kafka.js.org).
+This is the official Node.js client for the [General Coordinates Network (GCN)](https://gcn.nasa.gov). It is a very lightweight wrapper around [@confluentinc/kafka-javascript](https://www.npmjs.com/package/@confluentinc/kafka-javascript).
 
 ## To Install
 
@@ -28,6 +28,7 @@ List topics:
 
 ```mjs
 const admin = kafka.admin()
+await admin.connect()
 const topics = await admin.listTopics()
 console.log(topics)
 ```
@@ -36,6 +37,7 @@ Subscribe to topics and receive alerts:
 
 ```mjs
 const consumer = kafka.consumer()
+await consumer.connect()
 await consumer.subscribe({
   topics: [
     'gcn.classic.text.FERMI_GBM_FIN_POS',
