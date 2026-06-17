@@ -18,4 +18,10 @@ jobs:
           node-version: 24
           registry-url: 'https://registry.npmjs.org'
       - run: npm ci
-      - run: npm publish --access public
+      - run: |
+          PREID=$(node prerelease.mjs)
+          if [ -z "${PREID}" ]; then
+            npm publish --access public
+          else
+            npm publish --access public --tag $PREID
+          fi
