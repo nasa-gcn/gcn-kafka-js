@@ -34,7 +34,7 @@
     "node": ">=18 <25"
   },
   "dependencies": {
-    "@confluentinc/kafka-javascript": "^1.9.1"
+    "@confluentinc/kafka-javascript": "^1.10.0"
   },
   "devDependencies": {
     "@tsconfig/node18": "^18.2.4",
@@ -48,6 +48,6 @@
     "singleQuote": true
   },
   "allowScripts": {
-    "@confluentinc/kafka-javascript@1.9.1": true
+    "@confluentinc/kafka-javascript@1.10.0": true
   }
 }
