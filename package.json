@@ -31,7 +31,7 @@
   ],
   "license": "CC0-1.0",
   "engines": {
-    "node": ">=18"
+    "node": ">=18 <25"
   },
   "dependencies": {
     "@confluentinc/kafka-javascript": "^1.9.1"
